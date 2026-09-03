@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HASSAM WEATHER</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Animated Background -->
+<div class="bg-gradient" id="bgGradient"></div>
+<div class="bg-orb bg-orb-1" id="bgOrb1"></div>
+<div class="bg-orb bg-orb-2" id="bgOrb2"></div>
+<div class="bg-orb bg-orb-3" id="bgOrb3"></div>
+<canvas id="particle-canvas"></canvas>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay hidden" id="loadingOverlay">
+  <div class="loader-ring"></div>
+  <div class="loader-text">Fetching Weather Data</div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- App Wrapper -->
+<div class="app-wrapper">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-brand">
+      <div class="brand-icon">⛅</div>
+      <div class="brand-text">
+        <span class="brand-name">HASSAM WEATHER</span>
+        <span class="brand-tagline">Real-Time Weather Intelligence</span>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="header-btn unit-toggle" id="unitToggleBtn" title="Toggle °C / °F">°C</button>
+      <button class="header-btn" id="refreshBtn" title="Refresh">🔄</button>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+
+    <!-- SEARCH -->
+    <section class="search-section">
+      <div class="search-container">
+        <div class="search-wrapper">
+          <span class="search-icon">🔍</span>
+          <input
+            type="text"
+            class="search-input"
+            id="searchInput"
+            placeholder="Search city, country..."
+            autocomplete="off"
+          />
+          <div class="search-dropdown" id="searchDropdown"></div>
+        </div>
+        <button class="search-btn" id="searchBtn">Search</button>
+        <button class="location-btn" id="locationBtn" title="Use My Location">📍</button>
+      </div>
+    </section>
+
+    <!-- WEATHER ALERT -->
+    <div class="alert-card" id="alertCard">
+      <div class="alert-icon">⚠️</div>
+      <div class="alert-text">
+        <div class="alert-title" id="alertTitle">Weather Alert</div>
+        <div id="alertDesc">Severe weather conditions expected in your area.</div>
+      </div>
+    </div>
+
+    <!-- WELCOME SCREEN -->
+    <div class="welcome-screen" id="welcomeScreen">
+      <span class="welcome-emoji">🌤️</span>
+      <h1 class="welcome-title">Welcome to HASSAM WEATHER</h1>
+      <p class="welcome-subtitle">
+        Search any city worldwide or allow location access<br>
+        to get real-time weather data, forecasts, and more.
+      </p>
+      <div class="welcome-features">
+        <div class="feature-chip">🌡️ Real-Time Temperature</div>
+        <div class="feature-chip">📅 5-Day Forecast</div>
+        <div class="feature-chip">⏱️ Hourly Updates</div>
+        <div class="feature-chip">💨 Wind & Humidity</div>
+        <div class="feature-chip">🌅 Sunrise & Sunset</div>
+        <div class="feature-chip">🌍 Global Coverage</div>
+      </div>
+    </div>
+
+    <!-- WEATHER CONTENT -->
+    <div class="weather-content" id="weatherContent">
+
+      <!-- MAIN WEATHER CARD -->
+      <div class="weather-main glass-strong">
+        <div class="weather-main-grid">
+          <div class="weather-info-left">
+            <div class="weather-location">
+              <span class="location-pin">📍</span>
+              <span class="city-name" id="cityName">—</span>
+            </div>
+            <div class="country-name" id="countryName">—</div>
+            <div class="weather-datetime">
+              <span id="currentDate">—</span>
+              <span class="datetime-divider"></span>
+              <span id="live-clock">—</span>
+            </div>
+            <div class="weather-temp-row">
+              <div class="temp-main">
+                <span id="tempValue">0</span>
+                <span class="temp-unit" id="tempUnit">°C</span>
+              </div>
+              <div class="weather-desc-col">
+                <div class="weather-condition" id="weatherCondition">—</div>
+                <div class="feels-like" id="feelsLike">Feels like —</div>
+              </div>
+            </div>
+          </div>
+          <div class="weather-icon-main">
+            <div class="weather-icon-svg" id="mainWeatherIcon">
+              <!-- Default SVG icon rendered by JS -->
+              <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <radialGradient id="sunGrad" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stop-color="#FFD700"/>
+                    <stop offset="100%" stop-color="#FF8C00"/>
+                  </radialGradient>
+                  <filter id="glow">
+                    <feGaussianBlur stdDeviation="4" result="blur"/>
+                    <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                  </filter>
+                </defs>
+                <circle cx="100" cy="100" r="45" fill="url(#sunGrad)" filter="url(#glow)" opacity="0.9">
+                  <animate attributeName="r" values="43;47;43" dur="3s" repeatCount="indefinite"/>
+                </circle>
+                <g stroke="#FFD700" stroke-width="4" stroke-linecap="round" opacity="0.7">
+                  <line x1="100" y1="20" x2="100" y2="10">
+                    <animateTransform attributeName="transform" type="rotate" from="0 100 100" to="360 100 100" dur="8s" repeatCount="indefinite"/>
+                  </line>
+                  <line x1="100" y1="20" x2="100" y2="10" transform="rotate(45 100 100)">
+                    <animateTransform attributeName="transform" type="rotate" from="45 100 100" to="405 100 100" dur="8s" repeatCount="indefinite"/>
+                  </line>
+                  <line x1="100" y1="20" x2="100" y2="10" transform="rotate(90 100 100)">
+                    <animateTransform attributeName="transform" type="rotate" from="90 100 100" to="450 100 100" dur="8s" repeatCount="indefinite"/>
+                  </line>
+                  <line x1="100" y1="20" x2="100" y2="10" transform="rotate(135 100 100)">
+                    <animateTransform attributeName="transform" type="rotate" from="135 100 100" to="495 100 100" dur="8s" repeatCount="indefinite"/>
+                  </line>
+                  <line x1="100" y1="20" x2="100" y2="10" transform="rotate(180 100 100)">
+                    <animateTransform attributeName="transform" type="rotate" from="180 100 100" to="540 100 100" dur="8s" repeatCount="indefinite"/>
+                  </line>
+                  <line x1="100" y1="20" x2="100" y2="10" transform="rotate(225 100 100)">
+                    <animateTransform attributeName="transform" type="rotate" from="225 100 100" to="585 100 100" dur="8s" repeatCount="indefinite"/>
+                  </line>
+                  <line x1="100" y1="20" x2="100" y2="10" transform="rotate(270 100 100)">
+                    <animateTransform attributeName="transform" type="rotate" from="270 100 100" to="630 100 100" dur="8s" repeatCount="indefinite"/>
+                  </line>
+                  <line x1="100" y1="20" x2="100" y2="10" transform="rotate(315 100 100)">
+                    <animateTransform attributeName="transform" type="rotate" from="315 100 100" to="675 100 100" dur="8s" repeatCount="indefinite"/>
+                  </line>
+                </g>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- INFO CARDS -->
+      <div class="section-title">Weather Details</div>
+      <div class="info-grid" id="infoGrid">
+        <!-- Dynamically filled by JS -->
+      </div>
+
+      <!-- HOURLY FORECAST -->
+      <section class="hourly-section">
+        <div class="section-title">Hourly Forecast</div>
+        <div class="hourly-scroll" id="hourlyScroll">
+          <!-- Dynamically filled by JS -->
+        </div>
+      </section>
+
+      <!-- 5-DAY FORECAST -->
+      <section class="forecast-section">
+        <div class="section-title">5-Day Forecast</div>
+        <div class="forecast-list" id="forecastList">
+          <!-- Dynamically filled by JS -->
+        </div>
+      </section>
+
+      <!-- BOTTOM GRID: Sunrise/Sunset + Wind -->
+      <div class="bottom-grid">
+
+        <!-- Sunrise / Sunset -->
+        <div class="sun-card">
+          <div class="sun-title">☀️ Sun Schedule</div>
+          <div class="sun-times">
+            <div class="sun-time-item">
+              <span class="sun-time-icon">🌅</span>
+              <div class="sun-time-label">Sunrise</div>
+              <div class="sun-time-value" id="sunriseTime">—</div>
+            </div>
+            <div class="sun-time-item">
+              <span class="sun-time-icon">🌇</span>
+              <div class="sun-time-label">Sunset</div>
+              <div class="sun-time-value" id="sunsetTime">—</div>
+            </div>
+            <div class="sun-time-item">
+              <span class="sun-time-icon">⏳</span>
+              <div class="sun-time-label">Day Length</div>
+              <div class="sun-time-value" id="dayLength">—</div>
+            </div>
+          </div>
+          <div class="sun-arc">
+            <svg class="sun-arc-svg" viewBox="0 0 300 80" id="sunArcSvg">
+              <defs>
+                <linearGradient id="arcGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%"   stop-color="#FF8C00" stop-opacity="0.3"/>
+                  <stop offset="50%"  stop-color="#FFD700" stop-opacity="0.6"/>
+                  <stop offset="100%" stop-color="#FF4500" stop-opacity="0.3"/>
+                </linearGradient>
+              </defs>
+              <path d="M 20 75 Q 150 -10 280 75"
+                    stroke="url(#arcGrad)"
+                    stroke-width="2"
+                    fill="none"
+                    stroke-dasharray="4 4"
+                    opacity="0.5"/>
+              <circle id="sunDot" cx="150" cy="20" r="6" fill="#FFD700">
+                <animate attributeName="r" values="5;7;5" dur="2s" repeatCount="indefinite"/>
+              </circle>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Air & Wind -->
+        <div class="aqi-card">
+          <div class="sun-title">🌬️ Air & Wind</div>
+          <div class="aqi-meter">
+            <div class="aqi-circle" id="aqiCircle"
+                 style="--aqi-color:#00d4ff; --aqi-pct:30%; --aqi-glow:rgba(0,212,255,0.3);">
+              <div class="aqi-circle-inner">
+                <div class="aqi-num" id="windSpeed2">—</div>
+                <div class="aqi-label">km/h</div>
+              </div>
+            </div>
+            <div class="aqi-info">
+              <div class="aqi-status" id="windCondition">—</div>
+              <div class="aqi-desc"   id="windDetails">—</div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /bottom-grid -->
+
+    </div><!-- /weather-content -->
+
+  </main>
+
+  <footer class="footer">
+    <span>HASSAM WEATHER</span> · Powered by OpenWeatherMap · Built with ❤️
+  </footer>
+
+</div><!-- /app-wrapper -->
+
+<script src="script.js"></script>
+</body>
+</html>
