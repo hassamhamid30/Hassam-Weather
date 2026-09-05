@@ -1,31 +1,25 @@
 /* ================================================================
    HASSAM WEATHER — style.css
-   All styles, gradients, animations, glassmorphism, responsive
    ================================================================ */
 
 /* ===== CSS VARIABLES ===== */
 :root {
-  --glass-bg:      rgba(255, 255, 255, 0.08);
-  --glass-border:  rgba(255, 255, 255, 0.15);
-  --glass-shadow:  0 8px 32px rgba(0, 0, 0, 0.3);
-  --text-primary:  #ffffff;
+  --glass-bg:       rgba(255, 255, 255, 0.08);
+  --glass-border:   rgba(255, 255, 255, 0.15);
+  --glass-shadow:   0 8px 32px rgba(0, 0, 0, 0.3);
+  --text-primary:   #ffffff;
   --text-secondary: rgba(255, 255, 255, 0.7);
-  --text-muted:    rgba(255, 255, 255, 0.45);
-  --accent:        #00d4ff;
-  --accent2:       #7c3aed;
-  --radius-lg:     24px;
-  --radius-md:     16px;
-  --radius-sm:     12px;
-  --transition:    all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  --text-muted:     rgba(255, 255, 255, 0.45);
+  --accent:         #00d4ff;
+  --accent2:        #7c3aed;
+  --radius-lg:      24px;
+  --radius-md:      16px;
+  --radius-sm:      12px;
+  --transition:     all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ===== RESET ===== */
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 
 body {
@@ -40,14 +34,6 @@ body {
 /* ================================================================
    ANIMATED BACKGROUND
    ================================================================ */
-#bg-canvas {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  z-index: 0;
-  pointer-events: none;
-}
-
 .bg-gradient {
   position: fixed;
   top: 0; left: 0;
@@ -66,21 +52,18 @@ body {
   z-index: 0;
   animation: orbFloat 8s ease-in-out infinite;
 }
-
 .bg-orb-1 {
   width: 600px; height: 600px;
   top: -200px; left: -200px;
   background: radial-gradient(circle, #1a6fc4, transparent);
   animation-delay: 0s;
 }
-
 .bg-orb-2 {
   width: 500px; height: 500px;
   bottom: -150px; right: -150px;
   background: radial-gradient(circle, #7c3aed, transparent);
   animation-delay: -3s;
 }
-
 .bg-orb-3 {
   width: 400px; height: 400px;
   top: 40%; left: 50%;
@@ -93,7 +76,6 @@ body {
   50%       { transform: translateY(-40px) scale(1.1); }
 }
 
-/* Particle canvas */
 #particle-canvas {
   position: fixed;
   top: 0; left: 0;
@@ -103,7 +85,7 @@ body {
 }
 
 /* ================================================================
-   MAIN WRAPPER
+   APP WRAPPER
    ================================================================ */
 .app-wrapper {
   position: relative;
@@ -122,7 +104,6 @@ body {
   border: 1px solid var(--glass-border);
   box-shadow: var(--glass-shadow);
 }
-
 .glass-strong {
   background: rgba(255, 255, 255, 0.12);
   backdrop-filter: blur(30px);
@@ -243,19 +224,36 @@ body {
 
 /* ================================================================
    SEARCH SECTION
+   ================================================================
+   CRITICAL: overflow must be visible so the dropdown
+   is never clipped by a parent container.
    ================================================================ */
-.search-section { margin-bottom: 32px; }
+.search-section {
+  margin-bottom: 32px;
+  /* Must NOT have overflow:hidden — dropdown would be clipped */
+  overflow: visible;
+}
 
 .search-container {
   position: relative;
   display: flex;
   gap: 12px;
   align-items: center;
+  /* Must NOT have overflow:hidden */
+  overflow: visible;
 }
 
+/* ================================================================
+   SEARCH WRAPPER
+   ================================================================
+   This is the positioning parent for the dropdown.
+   It must be position:relative and overflow:visible.
+   ================================================================ */
 .search-wrapper {
-  flex: 1;
-  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;           /* allow flex child to shrink */
+  position: relative;     /* dropdown positions against this */
+  overflow: visible;      /* NEVER clip the dropdown */
 }
 
 .search-icon {
@@ -267,6 +265,7 @@ body {
   color: var(--text-muted);
   z-index: 2;
   transition: var(--transition);
+  pointer-events: none;
 }
 
 .search-input {
@@ -283,6 +282,9 @@ body {
   outline: none;
   transition: var(--transition);
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+  /* Ensure input never causes horizontal scroll */
+  box-sizing: border-box;
+  max-width: 100%;
 }
 
 .search-input::placeholder { color: var(--text-muted); }
@@ -307,6 +309,7 @@ body {
   cursor: pointer;
   transition: var(--transition);
   white-space: nowrap;
+  flex-shrink: 0;
   box-shadow: 0 4px 20px rgba(0, 212, 255, 0.3);
   letter-spacing: 0.5px;
 }
@@ -316,7 +319,6 @@ body {
   box-shadow: 0 8px 30px rgba(0, 212, 255, 0.5);
   background: linear-gradient(135deg, #20e0ff, #00b8e6);
 }
-
 .search-btn:active { transform: translateY(0); }
 
 .location-btn {
@@ -330,6 +332,7 @@ body {
   cursor: pointer;
   transition: var(--transition);
   white-space: nowrap;
+  flex-shrink: 0;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
@@ -340,45 +343,135 @@ body {
   box-shadow: 0 8px 25px rgba(124, 58, 237, 0.3);
 }
 
-/* Autocomplete dropdown */
+/* ================================================================
+   SEARCH DROPDOWN
+   ================================================================
+   Desktop: absolute, positioned under .search-wrapper.
+   Mobile:  fixed, spans full viewport width (see media query).
+   ================================================================ */
 .search-dropdown {
+  /* Hidden by default */
+  display: none;
+
+  /* Positioned relative to .search-wrapper */
   position: absolute;
   top: calc(100% + 8px);
-  left: 0; right: 0;
-  background: rgba(15, 25, 50, 0.95);
+  left: 0;
+  right: 0;
+  width: 100%;
+
+  /* Sizing */
+  max-height: 380px;
+  min-width: 0;
+
+  /* Scroll when many results */
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  /* Visual */
+  background: rgba(10, 18, 40, 0.97);
   backdrop-filter: blur(30px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  z-index: 200;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-  display: none;
+  -webkit-backdrop-filter: blur(30px);
+  border: 1px solid rgba(0, 212, 255, 0.22);
+  border-radius: 18px;
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.75),
+    0 0 0 1px rgba(255, 255, 255, 0.04);
+
+  /* Above everything except modals */
+  z-index: 99999;
+
+  /* Never clip content */
+  box-sizing: border-box;
 }
 
 .search-dropdown.active { display: block; }
 
+/* Scrollbar */
+.search-dropdown::-webkit-scrollbar       { width: 4px; }
+.search-dropdown::-webkit-scrollbar-track { background: transparent; }
+.search-dropdown::-webkit-scrollbar-thumb {
+  background: rgba(0, 212, 255, 0.35);
+  border-radius: 2px;
+}
+
+/* ================================================================
+   DROPDOWN ITEM
+   ================================================================ */
 .dropdown-item {
-  padding: 14px 20px;
-  cursor: pointer;
-  transition: var(--transition);
+  /* Layout */
   display: flex;
-  align-items: center;
+  align-items: flex-start;   /* top-align so icon sits beside first line */
   gap: 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  font-size: 14px;
-  font-weight: 500;
+  padding: 14px 18px;
+  width: 100%;
+  box-sizing: border-box;
+
+  /* Interaction */
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.18s ease;
+
+  /* Separator */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+
+  /* ============================================================
+     KEY FIX: text must wrap, never overflow horizontally
+     ============================================================ */
+  white-space: normal;       /* allow wrapping */
+  overflow: hidden;          /* contain within item box */
+  word-break: break-word;    /* break very long words */
+  overflow-wrap: break-word;
 }
 
 .dropdown-item:last-child { border-bottom: none; }
 
-.dropdown-item:hover {
-  background: rgba(0, 212, 255, 0.1);
-  color: var(--accent);
+.dropdown-item:hover,
+.dropdown-item:active {
+  background: rgba(0, 212, 255, 0.11);
 }
 
+/* Pin icon — fixed size, never shrinks */
 .dropdown-item-icon {
-  font-size: 16px;
+  font-size: 18px;
+  flex-shrink: 0;
+  margin-top: 1px;   /* optical alignment with first text line */
+  line-height: 1.2;
   color: var(--text-muted);
+}
+
+/* Text block — takes remaining width */
+.dropdown-item-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1 1 0%;      /* shrink to available space */
+  min-width: 0;      /* allow flex child to shrink below content size */
+  overflow: hidden;
+}
+
+/* Primary line: locality / city name */
+.dropdown-item-city {
+  font-size: 15px;
+  font-weight: 600;
+  color: #ffffff;
+  line-height: 1.35;
+  /* Wrap fully — never truncate */
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Secondary line: region, country */
+.dropdown-item-country {
+  font-size: 12px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.52);
+  line-height: 1.45;
+  /* Wrap fully — never truncate */
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 /* ================================================================
@@ -397,11 +490,7 @@ body {
   backdrop-filter: blur(10px);
   transition: opacity 0.5s ease;
 }
-
-.loading-overlay.hidden {
-  opacity: 0;
-  pointer-events: none;
-}
+.loading-overlay.hidden { opacity: 0; pointer-events: none; }
 
 .loader-ring {
   width: 70px; height: 70px;
@@ -411,7 +500,6 @@ body {
   border-right-color: var(--accent2);
   animation: spin 1s linear infinite;
 }
-
 @keyframes spin { to { transform: rotate(360deg); } }
 
 .loader-text {
@@ -422,14 +510,13 @@ body {
   text-transform: uppercase;
   animation: loadPulse 1.5s ease-in-out infinite;
 }
-
 @keyframes loadPulse {
   0%, 100% { opacity: 0.5; }
   50%       { opacity: 1; }
 }
 
 /* ================================================================
-   TOAST NOTIFICATIONS
+   TOAST
    ================================================================ */
 .toast {
   position: fixed;
@@ -447,10 +534,10 @@ body {
   font-weight: 500;
   transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 8px 30px rgba(220, 38, 38, 0.4);
-  max-width: 400px;
+  max-width: 90vw;
   text-align: center;
+  word-break: break-word;
 }
-
 .toast.show    { transform: translateX(-50%) translateY(0); }
 .toast.success {
   background: rgba(16, 185, 129, 0.9);
@@ -496,10 +583,7 @@ body {
   margin-bottom: 8px;
 }
 
-.location-pin {
-  font-size: 18px;
-  color: var(--accent);
-}
+.location-pin { font-size: 18px; color: var(--accent); }
 
 .city-name {
   font-size: 32px;
@@ -574,10 +658,7 @@ body {
   text-transform: capitalize;
 }
 
-.feels-like {
-  font-size: 14px;
-  color: var(--text-secondary);
-}
+.feels-like { font-size: 14px; color: var(--text-secondary); }
 
 .weather-icon-main {
   display: flex;
@@ -587,8 +668,7 @@ body {
 }
 
 .weather-icon-svg {
-  width: 160px;
-  height: 160px;
+  width: 160px; height: 160px;
   filter: drop-shadow(0 10px 40px rgba(0,212,255,0.4));
   animation: iconFloat 4s ease-in-out infinite;
 }
@@ -612,7 +692,6 @@ body {
   align-items: center;
   gap: 10px;
 }
-
 .section-title::after {
   content: '';
   flex: 1;
@@ -657,14 +736,9 @@ body {
   border-color: rgba(0, 212, 255, 0.3);
   box-shadow: 0 12px 40px rgba(0,0,0,0.3), 0 0 20px rgba(0,212,255,0.1);
 }
-
 .info-card:hover::before { opacity: 1; }
 
-.info-icon {
-  font-size: 24px;
-  margin-bottom: 10px;
-  display: block;
-}
+.info-icon { font-size: 24px; margin-bottom: 10px; display: block; }
 
 .info-label {
   font-size: 11px;
@@ -683,11 +757,7 @@ body {
   margin-bottom: 4px;
 }
 
-.info-desc {
-  font-size: 11px;
-  color: var(--text-muted);
-  margin-top: 4px;
-}
+.info-desc { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
 
 .info-bar {
   margin-top: 10px;
@@ -717,10 +787,12 @@ body {
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 212, 255, 0.3) transparent;
 }
-
-.hourly-scroll::-webkit-scrollbar         { height: 4px; }
-.hourly-scroll::-webkit-scrollbar-track   { background: transparent; }
-.hourly-scroll::-webkit-scrollbar-thumb   { background: rgba(0,212,255,0.3); border-radius: 2px; }
+.hourly-scroll::-webkit-scrollbar       { height: 4px; }
+.hourly-scroll::-webkit-scrollbar-track { background: transparent; }
+.hourly-scroll::-webkit-scrollbar-thumb {
+  background: rgba(0,212,255,0.3);
+  border-radius: 2px;
+}
 
 .hourly-card {
   flex: 0 0 auto;
@@ -734,13 +806,11 @@ body {
   transition: var(--transition);
   cursor: default;
 }
-
 .hourly-card:hover {
   transform: translateY(-4px);
   background: rgba(255, 255, 255, 0.1);
   border-color: rgba(0, 212, 255, 0.3);
 }
-
 .hourly-card.current {
   background: linear-gradient(135deg, rgba(0,212,255,0.2), rgba(124,58,237,0.2));
   border-color: rgba(0, 212, 255, 0.4);
@@ -754,31 +824,16 @@ body {
   margin-bottom: 10px;
   letter-spacing: 0.5px;
 }
-
 .hourly-card.current .hourly-time { color: var(--accent); }
-
-.hourly-icon {
-  font-size: 24px;
-  margin-bottom: 10px;
-  display: block;
-}
-
-.hourly-temp {
-  font-size: 15px;
-  font-weight: 700;
-  color: white;
-}
+.hourly-icon { font-size: 24px; margin-bottom: 10px; display: block; }
+.hourly-temp { font-size: 15px; font-weight: 700; color: white; }
 
 /* ================================================================
    5-DAY FORECAST
    ================================================================ */
 .forecast-section { margin-bottom: 24px; }
 
-.forecast-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
+.forecast-list { display: flex; flex-direction: column; gap: 10px; }
 
 .forecast-card {
   border-radius: var(--radius-md);
@@ -792,64 +847,27 @@ body {
   transition: var(--transition);
   cursor: default;
 }
-
 .forecast-card:hover {
   transform: translateX(4px);
   background: rgba(255, 255, 255, 0.1);
   border-color: rgba(0, 212, 255, 0.2);
 }
 
-.forecast-day {
-  width: 90px;
-  font-size: 14px;
-  font-weight: 600;
-  color: white;
-}
+.forecast-day { width: 90px; font-size: 14px; font-weight: 600; color: white; }
+.forecast-date { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+.forecast-icon { font-size: 28px; flex: 0 0 auto; }
+.forecast-condition { flex: 1; font-size: 13px; color: var(--text-secondary); text-transform: capitalize; }
 
-.forecast-date {
-  font-size: 11px;
-  color: var(--text-muted);
-  margin-top: 2px;
-}
-
-.forecast-icon {
-  font-size: 28px;
-  flex: 0 0 auto;
-}
-
-.forecast-condition {
-  flex: 1;
-  font-size: 13px;
-  color: var(--text-secondary);
-  text-transform: capitalize;
-}
-
-.forecast-temps {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.forecast-high {
-  font-size: 16px;
-  font-weight: 700;
-  color: white;
-}
-
-.forecast-low {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--text-muted);
-}
+.forecast-temps { display: flex; align-items: center; gap: 12px; }
+.forecast-high  { font-size: 16px; font-weight: 700; color: white; }
+.forecast-low   { font-size: 14px; font-weight: 500; color: var(--text-muted); }
 
 .forecast-temp-bar {
-  width: 80px;
-  height: 4px;
+  width: 80px; height: 4px;
   border-radius: 2px;
   background: rgba(255, 255, 255, 0.1);
   overflow: hidden;
 }
-
 .forecast-temp-fill {
   height: 100%;
   border-radius: 2px;
@@ -857,7 +875,7 @@ body {
 }
 
 /* ================================================================
-   BOTTOM GRID (Sun Schedule + Wind)
+   BOTTOM GRID
    ================================================================ */
 .bottom-grid {
   display: grid;
@@ -866,8 +884,7 @@ body {
   margin-bottom: 24px;
 }
 
-/* Sun Card */
-.sun-card {
+.sun-card, .aqi-card {
   border-radius: var(--radius-md);
   padding: 24px;
   background: rgba(255, 255, 255, 0.06);
@@ -884,55 +901,16 @@ body {
   margin-bottom: 20px;
 }
 
-.sun-times {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 20px;
-}
-
+.sun-times { display: flex; justify-content: space-between; margin-bottom: 20px; }
 .sun-time-item { text-align: center; }
+.sun-time-icon { font-size: 28px; margin-bottom: 6px; display: block; }
+.sun-time-label { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
+.sun-time-value { font-size: 18px; font-weight: 700; color: white; }
 
-.sun-time-icon {
-  font-size: 28px;
-  margin-bottom: 6px;
-  display: block;
-}
-
-.sun-time-label {
-  font-size: 11px;
-  color: var(--text-muted);
-  margin-bottom: 4px;
-}
-
-.sun-time-value {
-  font-size: 18px;
-  font-weight: 700;
-  color: white;
-}
-
-.sun-arc {
-  position: relative;
-  height: 80px;
-  overflow: hidden;
-}
-
+.sun-arc { position: relative; height: 80px; overflow: hidden; }
 .sun-arc-svg { width: 100%; height: 100%; }
 
-/* AQI / Wind Card */
-.aqi-card {
-  border-radius: var(--radius-md);
-  padding: 24px;
-  background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.aqi-meter {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-top: 16px;
-}
+.aqi-meter { display: flex; align-items: center; gap: 16px; margin-top: 16px; }
 
 .aqi-circle {
   width: 80px; height: 80px;
@@ -961,36 +939,14 @@ body {
   justify-content: center;
 }
 
-.aqi-num {
-  font-size: 20px;
-  font-weight: 800;
-  color: white;
-  line-height: 1;
-}
-
-.aqi-label {
-  font-size: 9px;
-  color: var(--text-muted);
-  letter-spacing: 1px;
-}
-
-.aqi-info    { flex: 1; }
-
-.aqi-status {
-  font-size: 18px;
-  font-weight: 700;
-  color: white;
-  margin-bottom: 4px;
-}
-
-.aqi-desc {
-  font-size: 12px;
-  color: var(--text-secondary);
-  line-height: 1.5;
-}
+.aqi-num   { font-size: 20px; font-weight: 800; color: white; line-height: 1; }
+.aqi-label { font-size: 9px; color: var(--text-muted); letter-spacing: 1px; }
+.aqi-info  { flex: 1; }
+.aqi-status { font-size: 18px; font-weight: 700; color: white; margin-bottom: 4px; }
+.aqi-desc   { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
 
 /* ================================================================
-   WEATHER ALERT
+   ALERT CARD
    ================================================================ */
 .alert-card {
   border-radius: var(--radius-md);
@@ -998,27 +954,14 @@ body {
   margin-bottom: 16px;
   background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(220,38,38,0.1));
   border: 1px solid rgba(245, 158, 11, 0.3);
-  display: flex;
   align-items: center;
   gap: 14px;
   display: none;
 }
-
 .alert-card.show { display: flex; }
-
-.alert-icon  { font-size: 24px; }
-
-.alert-text {
-  font-size: 13px;
-  color: var(--text-secondary);
-  line-height: 1.5;
-}
-
-.alert-title {
-  font-weight: 700;
-  color: #fbbf24;
-  margin-bottom: 2px;
-}
+.alert-icon { font-size: 24px; }
+.alert-text { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+.alert-title { font-weight: 700; color: #fbbf24; margin-bottom: 2px; }
 
 /* ================================================================
    WELCOME SCREEN
@@ -1082,11 +1025,7 @@ body {
 /* ================================================================
    WEATHER CONTENT
    ================================================================ */
-.weather-content {
-  animation: fadeInUp 0.6s ease;
-  display: none;
-}
-
+.weather-content { display: none; animation: fadeInUp 0.6s ease; }
 .weather-content.active { display: block; }
 
 @keyframes fadeInUp {
@@ -1104,66 +1043,64 @@ body {
   color: var(--text-muted);
   letter-spacing: 0.5px;
 }
-
 .footer span { color: var(--accent); }
 
 /* ================================================================
-   LIVE CLOCK
+   MISC
    ================================================================ */
 #live-clock { font-variant-numeric: tabular-nums; }
 
-/* ================================================================
-   SCROLLBAR
-   ================================================================ */
-::-webkit-scrollbar        { width: 6px; }
-::-webkit-scrollbar-track  { background: transparent; }
-::-webkit-scrollbar-thumb  { background: rgba(255,255,255,0.1); border-radius: 3px; }
+::-webkit-scrollbar       { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(0,212,255,0.3); }
 
 /* ================================================================
-   SHIMMER UTILITY
-   ================================================================ */
-.shimmer {
-  background: linear-gradient(
-    90deg,
-    rgba(255,255,255,0) 0%,
-    rgba(255,255,255,0.05) 50%,
-    rgba(255,255,255,0) 100%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 2s infinite;
-}
-
-@keyframes shimmer {
-  0%   { background-position: -200% 0; }
-  100% { background-position:  200% 0; }
-}
-
-/* ================================================================
-   RESPONSIVE — TABLET
+   RESPONSIVE — 900px (tablet)
    ================================================================ */
 @media (max-width: 900px) {
   .info-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 /* ================================================================
-   RESPONSIVE — MOBILE
+   RESPONSIVE — 768px (large mobile / small tablet)
    ================================================================ */
 @media (max-width: 768px) {
-  .weather-main          { padding: 28px 22px; }
-  .weather-main-grid     { grid-template-columns: 1fr; }
-  .weather-icon-main     { display: none; }
-  .temp-main             { font-size: 70px; }
-  .city-name             { font-size: 26px; }
-  .info-grid             { gap: 10px; }
-  .search-container      { flex-wrap: wrap; }
-  .search-btn            { flex: 1; }
-  .forecast-card         { padding: 14px 16px; gap: 10px; }
-  .forecast-temp-bar     { display: none; }
-  .header-brand .brand-tagline { display: none; }
-  .bottom-grid           { grid-template-columns: 1fr; }
+  .weather-main      { padding: 28px 22px; }
+  .weather-main-grid { grid-template-columns: 1fr; }
+  .weather-icon-main { display: none; }
+  .temp-main         { font-size: 70px; }
+  .city-name         { font-size: 26px; }
+  .info-grid         { gap: 10px; }
+  .search-container  { flex-wrap: wrap; }
+  .search-btn        { flex: 1; }
+  .forecast-card     { padding: 14px 16px; gap: 10px; }
+  .forecast-temp-bar { display: none; }
+  .brand-tagline     { display: none; }
+  .bottom-grid       { grid-template-columns: 1fr; }
+
+  /* ── Dropdown mobile override ── */
+  .search-dropdown {
+    /*
+     * On mobile the dropdown switches to position:fixed so it
+     * can escape any overflow:hidden ancestor and always sit
+     * inside the visible viewport.
+     * The exact `top` value is set dynamically by JS.
+     */
+    position:      fixed !important;
+    left:          12px !important;
+    right:         12px !important;
+    width:         calc(100vw - 24px) !important;
+    max-width:     calc(100vw - 24px) !important;
+    max-height:    52vh !important;
+    border-radius: 16px !important;
+    /* top is set by JS — see positionDropdown() */
+  }
 }
 
+/* ================================================================
+   RESPONSIVE — 480px (small phones)
+   ================================================================ */
 @media (max-width: 480px) {
   .main-content  { padding: 20px 14px; }
   .header        { padding: 12px 16px; }
@@ -1171,4 +1108,21 @@ body {
   .temp-main     { font-size: 58px; }
   .weather-main  { padding: 22px 18px; }
   .info-grid     { grid-template-columns: repeat(2, 1fr); }
+
+  /* ── Dropdown small phone override ── */
+  .search-dropdown {
+    left:          8px !important;
+    right:         8px !important;
+    width:         calc(100vw - 16px) !important;
+    max-width:     calc(100vw - 16px) !important;
+    max-height:    48vh !important;
+    border-radius: 14px !important;
+  }
+
+  .dropdown-item {
+    padding: 13px 14px;
+    gap:     10px;
+  }
+  .dropdown-item-city    { font-size: 14px; }
+  .dropdown-item-country { font-size: 12px; }
 }
